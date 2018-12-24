@@ -265,13 +265,19 @@ const buildConfigFromPath = async configPath => {
 
 // Retrieves the static.config.js from the current project directory
 export default (async function getConfig(
-  configPath = DEFAULT_PATH_FOR_STATIC_CONFIG,
+  configReference = DEFAULT_PATH_FOR_STATIC_CONFIG,
   subscription
 ) {
-  configPath = nodePath.resolve(configPath)
+  if (typeof configReference === 'object') {
+    // return a custom config obj
+    return buildConfig(configReference)
+  }
+
+  configReference = nodePath.resolve(configReference)
 
   const noConfig =
-    configPath === DEFAULT_PATH_FOR_STATIC_CONFIG && !fs.existsSync(configPath)
+    configReference === DEFAULT_PATH_FOR_STATIC_CONFIG &&
+    !fs.existsSync(configReference)
 
   if (noConfig) {
     if (subscription) {
@@ -282,13 +288,13 @@ export default (async function getConfig(
     return buildConfig(defaultConfig)
   }
 
-  const config = await buildConfigFromPath(configPath)
+  const config = await buildConfigFromPath(configReference)
 
   if (subscription) {
     // If subscribing, return a never ending promise
     return new Promise(() => {
-      chokidar.watch(configPath).on('all', async () => {
-        subscription(await buildConfigFromPath(configPath))
+      chokidar.watch(configReference).on('all', async () => {
+        subscription(await buildConfigFromPath(configReference))
       })
     })
   }
