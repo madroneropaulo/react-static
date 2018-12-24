@@ -270,8 +270,10 @@ export default (async function getConfig(
 ) {
   if (typeof configReference === 'object') {
     // return a custom config obj
+    console.log("Config is an object...");
     return buildConfig(configReference)
   }
+  console.log("Config is not an object...");
 
   configReference = nodePath.resolve(configReference)
 
