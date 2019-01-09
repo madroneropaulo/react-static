@@ -284,6 +284,8 @@ export default (async function getConfig(
     configReference === DEFAULT_PATH_FOR_STATIC_CONFIG &&
     !fs.existsSync(configReference)
 
+  console.log("Config reference:", configReference);
+  console.log("noConfig:", noConfig);
   if (noConfig) {
     if (subscription) {
       return new Promise(async () => {
@@ -294,6 +296,7 @@ export default (async function getConfig(
   }
 
   const config = await buildConfigFromPath(configReference)
+  console.log("Final config:", config);
 
   if (subscription) {
     // If subscribing, return a never ending promise
